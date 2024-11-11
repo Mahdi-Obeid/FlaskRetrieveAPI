@@ -5,7 +5,6 @@ from models import Company
 from dotenv import load_dotenv
 
 load_dotenv()
-# http://192.168.112.144:5001/api/v2.1
 base_url = os.getenv("URL")
 
 
