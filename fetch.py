@@ -35,8 +35,10 @@ def fetch_and_store_data_companies():
         print("Failed to retrieve data from API:", response.status_code)
 
 
-def fetch_and_store_data_status():
-    companies = Company.query.all()
+def fetch_and_store_data_status(limit=100):
+    companies = Company.query.limit(limit).all()
+    print(f"Processing status for {len(companies)} companies")
+
     for company in companies:
         company_id = company.id
 

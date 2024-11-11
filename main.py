@@ -35,6 +35,6 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         fetch_and_store_data_companies()
-        fetch_and_store_data_status()
+        fetch_and_store_data_status(limit=100)
 
     app.run()
