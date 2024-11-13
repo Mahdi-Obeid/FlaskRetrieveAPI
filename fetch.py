@@ -1,7 +1,7 @@
 import os
 import requests
 from config import db
-from models import Company
+from models import Company, Status
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,16 +17,18 @@ def fetch_and_store_data_companies():
         print(f"Fetched {len(companies_data)} companies")
 
         for item in companies_data:
-            company = Company(
-                id=item["id"],
-                name=item["name"],
-                symbol=item["symbol"],
-                national_id=item["national_id"],
-                source=item["source"],
-                industry_name=item["industry_name"],
-                group_name=item["group_name"],
-                in_market=item["in_market"],
-            )
+            company = Company.query.filter_by(original_id=item["id"]).first()
+            if not company:
+                company = Company(original_id=item["id"])
+
+            company.name = item["name"]
+            company.symbol = item["symbol"]
+            company.national_id = item["national_id"]
+            company.source = item["source"]
+            company.industry_name = item["industry_name"]
+            company.group_name = item["group_name"]
+            company.in_market = item["in_market"]
+
             db.session.merge(company)
         db.session.commit()
         print("Companies data committed to the database.")
@@ -34,12 +36,12 @@ def fetch_and_store_data_companies():
         print("Failed to retrieve data from API:", response.status_code)
 
 
-def fetch_and_store_data_status(limit=100):
-    companies = Company.query.limit(limit).all()
+def fetch_and_store_data_status():
+    companies = Company.query.all()
     print(f"Processing status for {len(companies)} companies")
 
     for company in companies:
-        company_id = company.id
+        company_id = company.original_id
 
         url = f"{base_url}/companies/{company_id}/statements/profile/status/"
         response = requests.get(url)
@@ -50,16 +52,14 @@ def fetch_and_store_data_status(limit=100):
             number = status_data.get("number")
 
             if count is not None and number is not None:
-                company.count = count
-                company.number = number
+                status = Status.query.filter_by(company_original_id=company_id).first()
+                if not status:
+                    status = Status(company_original_id=company_id)
+
+                status.count = count
+                status.number = number
+                db.session.merge(status)
                 db.session.commit()
-                print(
-                    f"Updated company {company_id} with count: {count}, number: {number}"
-                )
-            else:
-                print(
-                    f"Missing data for company {company_id}: count or number not found"
-                )
         else:
             print(
                 f"Failed to retrieve status data for company {company_id}: {response.status_code}"
