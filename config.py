@@ -10,7 +10,6 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# Replace with your actual PostgreSQL database URI
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
