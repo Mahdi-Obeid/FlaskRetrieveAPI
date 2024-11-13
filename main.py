@@ -32,7 +32,7 @@ status_view = StatusResource.as_view("status_resource")
 
 # Register endpoint
 app.add_url_rule("/companies/", view_func=company_view)
-app.add_url_rule("/status/<int:original_id>", view_func=status_view)
+app.add_url_rule("/companies/status/<int:original_id>/", view_func=status_view)
 
 # Register for Swagger
 docs.register(CompanyResource, endpoint="company_resource")
