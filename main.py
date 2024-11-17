@@ -1,9 +1,19 @@
 from config import app, db
-from models import Company, Status
-from fetch import fetch_and_store_data_companies, fetch_and_store_data_status
+from models import (
+    Company,
+    Status,
+)
+from fetch import (
+    fetch_and_store_data_companies,
+    fetch_and_store_data_status,
+    fetch_and_store_financial_statements,
+)
 from flask_apispec import doc, marshal_with
 from flask_apispec.views import MethodResource
-from schemas import CompanySchema, StatusSchema
+from schemas import (
+    CompanySchema,
+    StatusSchema,
+)
 from flask.views import MethodView
 from swaggerConfig import docs
 
@@ -44,5 +54,6 @@ if __name__ == "__main__":
         db.create_all()
         fetch_and_store_data_companies()
         fetch_and_store_data_status()
+        fetch_and_store_financial_statements()
 
     app.run(debug=True)
