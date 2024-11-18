@@ -39,7 +39,10 @@ class Status(db.Model):
 
 class FinancialStatement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    company_id = db.Column(db.Integer, db.ForeignKey("company.id"))
+    company_id = db.Column(
+        db.Integer,
+        db.ForeignKey("company.original_id"),
+    )
     period_end = db.Column(db.Date)
     fiscal_year_end = db.Column(db.Date)
     period_type = db.Column(
@@ -50,21 +53,21 @@ class FinancialStatement(db.Model):
     audited = db.Column(db.Boolean, default=False)
     consolidated = db.Column(db.Boolean, default=False)
     represented = db.Column(db.Boolean, default=False)
-    # foreign key for the statement's items
+
+    # ensures that period_type only have the defined values
+    __table_args__ = (db.CheckConstraint("period_type IN (3, 6, 9, 12)"),)
+
+
+"""
     items = db.relationship(
         "FinancialStatementItem",
         backref="financial_statement",
         lazy="dynamic",
         cascade="all, delete-orphan",
     )
-    # ensures that period_type only have the defined values
-    __table_args__ = (
-        db.CheckConstraint(
-            "period_type IN (3, 6, 9, 12)", name="check_period_type_values"
-        ),
-    )
+"""
 
-
+"""
 class FinancialStatementItem(db.Model):
     id = db.Column(db.String(50), primary_key=True)
     financial_statement_id = db.Column(
@@ -77,3 +80,4 @@ class FinancialStatementItem(db.Model):
     financial_statement_item_id = db.Column(db.String(50))
     amount = db.Column(db.Numeric(20, 2))
     statement_type = db.Column(db.String(50))
+"""

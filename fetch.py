@@ -1,9 +1,8 @@
 import os
 import requests
 from config import db
-from models import Company, Status, FinancialStatement, FinancialStatementItem
+from models import Company, Status, FinancialStatement
 from dotenv import load_dotenv
-from datetime import datetime
 
 load_dotenv()
 base_url = os.getenv("URL")
@@ -33,8 +32,6 @@ def fetch_and_store_data_companies():
             db.session.merge(company)
         db.session.commit()
         print("Companies data committed to the database.")
-    else:
-        print("Failed to retrieve data from API:", response.status_code)
 
 
 def fetch_and_store_data_status():
@@ -61,16 +58,10 @@ def fetch_and_store_data_status():
                 status.number = number
                 db.session.merge(status)
                 db.session.commit()
-        else:
-            print(
-                f"Failed to retrieve status data for company {company_id}: {response.status_code}"
-            )
-
-    print("Status data for all companies has been updated.")
 
 
-def fetch_and_store_financial_statements():
-    companies = Company.query.all()
+def fetch_and_store_financial_statements(limit=5):
+    companies = Company.query.limit(limit).all()
     print(f"Processing financial statements for {len(companies)} companies")
 
     for company in companies:
@@ -83,51 +74,24 @@ def fetch_and_store_financial_statements():
             statements_data = response.json().get("data", [])
             print(f"Fetched {len(statements_data)} statements for company {company_id}")
 
-            for statement_data in statements_data:
-                # Convert string dates to datetime.date objects
-                period_end = datetime.strptime(statement_data["period_end"], "%Y-%m-%d").date()
-                fiscal_year_end = datetime.strptime(statement_data["fiscal_year_end"], "%Y-%m-%d").date()
-
-                # Check if statement already exists
-                statement = FinancialStatement.query.filter_by(
-                    company_id=company.original_id,
-                    period_end=period_end,
-                    fiscal_year_end=fiscal_year_end,
-                    period_type=statement_data["period_type"]
+            for statement in statements_data:
+                financial_statement = FinancialStatement.query.filter_by(
+                    company_id=company_id,
+                    period_end=statement["period_end"],
                 ).first()
 
-                if not statement:
-                    statement = FinancialStatement(company_id=company.original_id)
-
-                # Update statement attributes
-                statement.period_end = period_end
-                statement.fiscal_year_end = fiscal_year_end
-                statement.period_type = statement_data["period_type"]
-                statement.audited = statement_data["audited"]
-                statement.consolidated = statement_data["consolidated"]
-                statement.represented = statement_data["represented"]
-
-                db.session.merge(statement)
-                db.session.flush()  # Get the statement ID for items
-
-                # Process statement items
-                for item_data in statement_data.get("items", []):
-                    item = FinancialStatementItem(
-                        id=item_data["id"],
-                        financial_statement_id=statement.id,
-                        noavaran_id=item_data["noavaran_id"],
-                        level_order=item_data["level_order"],
-                        title=item_data["title"],
-                        financial_statement_item_id=item_data["financial_statement_item_id"],
-                        amount=item_data["amount"],
-                        statement_type=item_data["statement_type"]
+                if not financial_statement:
+                    financial_statement = FinancialStatement(
+                        company_id=company_id,
+                        period_end=statement["period_end"],
                     )
-                    db.session.add(item)
 
+                financial_statement.fiscal_year_end = statement["fiscal_year_end"]
+                financial_statement.period_type = statement["period_type"]
+                financial_statement.audited = statement["audited"]
+                financial_statement.consolidated = statement["consolidated"]
+                financial_statement.represented = statement["represented"]
+
+                db.session.merge(financial_statement)
 
             db.session.commit()
-            print(f"Financial statements for company {company_id} committed to database")
-        else:
-            print(f"Failed to retrieve financial statements for company {company_id}: {response.status_code}")
-
-    print("Financial statements for all companies have been updated.")

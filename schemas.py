@@ -18,3 +18,14 @@ class StatusSchema(Schema):
     company_original_id = fields.Int(required=True)
     count = fields.Int(allow_none=True)
     number = fields.Int(allow_none=True)
+
+
+class FinancialStatementSchema(Schema):
+    id = fields.Int(dump_only=True)
+    company_id = fields.Int(required=True)
+    period_end = fields.Date(required=True)
+    fiscal_year_end = fields.Date(required=True)
+    period_type = fields.Int(required=True)
+    audited = fields.Bool(required=True)
+    consolidated = fields.Bool(required=True)
+    represented = fields.Bool(required=True)
