@@ -65,13 +65,6 @@ class FinancialStatementResource(MethodResource, MethodView):
                 "required": False,
                 "in": "query",
             },
-            "period_type": {
-                "description": "Filter by period_type",
-                "type": "integer",
-                "enum": [3, 6, 9, 12],
-                "required": False,
-                "in": "query",
-            },
             "consolidated": {
                 "description": "Filter by consolidated statements (true/false)",
                 "type": "boolean",
@@ -90,7 +83,6 @@ class FinancialStatementResource(MethodResource, MethodView):
     def get(self, original_id):
         # Get query parameters
         time_series = request.args.get("time_series", type=int)
-        period_type = request.args.get("period_type", type=int)
         consolidated = request.args.get(
             "consolidated", type=lambda v: v.lower() == "true", default=None
         )
@@ -106,11 +98,6 @@ class FinancialStatementResource(MethodResource, MethodView):
         )
 
         # Apply query parameters
-
-        if period_type:
-            if period_type not in [3, 6, 9, 12]:
-                return {"error": "period_type must be 3, 6, 9, or 12"}, 400
-            query = query.filter(FinancialStatement.period_type == period_type)
 
         if consolidated is not None:
             query = query.filter(FinancialStatement.consolidated == consolidated)
