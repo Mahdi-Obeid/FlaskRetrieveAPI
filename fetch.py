@@ -61,7 +61,7 @@ def fetch_and_store_data_status():
 
 
 def fetch_and_store_financial_statements(limit=5):
-    companies = Company.query.limit(limit).all()
+    companies = Company.query.order_by(Company.original_id).limit(limit).all()
     print(f"Processing financial statements for {len(companies)} companies")
 
     for company in companies:
