@@ -47,7 +47,6 @@ class FinancialStatement(db.Model):
     fiscal_year_end = db.Column(db.Date)
     period_type = db.Column(
         db.Integer,
-        default=12,
         info={"choices": [3, 6, 9, 12]},
     )
     audited = db.Column(db.Boolean, default=False)

@@ -106,8 +106,6 @@ class FinancialStatementResource(MethodResource, MethodView):
         )
 
         # Apply query parameters
-        if time_series:
-            query = query.limit(time_series)
 
         if period_type:
             if period_type not in [3, 6, 9, 12]:
@@ -121,6 +119,9 @@ class FinancialStatementResource(MethodResource, MethodView):
             query = query.filter(FinancialStatement.audited == audited)
 
         query = query.order_by(FinancialStatement.period_end.desc())
+
+        if time_series:
+            query = query.limit(time_series)
 
         statements = query.all()
         return statements
