@@ -1,7 +1,7 @@
 import os
 import requests
 from config import db
-from models import Company, Status, FinancialStatement
+from models import Company, Status, FinancialStatement, FinancialStatementItem
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -92,6 +92,29 @@ def fetch_and_store_financial_statements(limit=5):
                 financial_statement.consolidated = statement["consolidated"]
                 financial_statement.represented = statement["represented"]
 
-                db.session.merge(financial_statement)
+                db.session.add(financial_statement)
+                db.session.flush()
 
+                for item in statement.get("items", []):
+                    financial_statement_item = FinancialStatementItem.query.filter_by(
+                        fetched_id=item["id"],  # Ensure no duplicate items
+                        financial_statement_id=financial_statement.id,
+                    ).first()
+
+                    if not financial_statement_item:
+                        financial_statement_item = FinancialStatementItem(
+                            fetched_id=item["id"],
+                            financial_statement_id=financial_statement.id,
+                        )
+
+                    financial_statement_item.noavaran_id = item.get("noavaran_id")
+                    financial_statement_item.level_order = item.get("level_order")
+                    financial_statement_item.title = item["title"]
+                    financial_statement_item.financial_statement_item_id = item[
+                        "financial_statement_item_id"
+                    ]
+                    financial_statement_item.amount = item["amount"]
+                    financial_statement_item.statement_type = item["statement_type"]
+
+                    db.session.add(financial_statement_item)
             db.session.commit()

@@ -53,31 +53,27 @@ class FinancialStatement(db.Model):
     audited = db.Column(db.Boolean, default=False)
     consolidated = db.Column(db.Boolean, default=False)
     represented = db.Column(db.Boolean, default=False)
-
-    # ensures that period_type only have the defined values
-    __table_args__ = (db.CheckConstraint("period_type IN (3, 6, 9, 12)"),)
-
-
-"""
     items = db.relationship(
         "FinancialStatementItem",
         backref="financial_statement",
         lazy="dynamic",
         cascade="all, delete-orphan",
     )
-"""
 
-"""
+    # ensures that period_type only have the defined values
+    __table_args__ = (db.CheckConstraint("period_type IN (3, 6, 9, 12)"),)
+
+
 class FinancialStatementItem(db.Model):
-    id = db.Column(db.String(50), primary_key=True)
-    financial_statement_id = db.Column(
-        db.Integer,
-        db.ForeignKey("financial_statement.id"),
-    )
+    id = db.Column(db.Integer, primary_key=True)
+    fetched_id = db.Column(db.String(50))
     noavaran_id = db.Column(db.Integer)
     level_order = db.Column(db.Integer)
     title = db.Column(db.String(200))
     financial_statement_item_id = db.Column(db.String(50))
-    amount = db.Column(db.Numeric(20, 2))
+    amount = db.Column(db.Integer)
     statement_type = db.Column(db.String(50))
-"""
+    financial_statement_id = db.Column(
+        db.Integer,
+        db.ForeignKey("financial_statement.id"),
+    )

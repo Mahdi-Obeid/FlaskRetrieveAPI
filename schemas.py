@@ -20,6 +20,17 @@ class StatusSchema(Schema):
     number = fields.Int(allow_none=True)
 
 
+class FinancialStatementItemSchema(Schema):
+    id = fields.Int(dump_only=True)
+    fetched_id = fields.Str()
+    noavaran_id = fields.Int()
+    level_order = fields.Int()
+    title = fields.Str()
+    financial_statement_item_id = fields.Str()
+    amount = fields.Int()
+    statement_type = fields.Str()
+
+
 class FinancialStatementSchema(Schema):
     id = fields.Int(dump_only=True)
     company_id = fields.Int(required=True)
@@ -29,3 +40,4 @@ class FinancialStatementSchema(Schema):
     audited = fields.Bool(required=True)
     consolidated = fields.Bool(required=True)
     represented = fields.Bool(required=True)
+    items = fields.Nested(FinancialStatementItemSchema, many=True)

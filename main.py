@@ -65,25 +65,62 @@ class FinancialStatementResource(MethodResource, MethodView):
                 "required": False,
                 "in": "query",
             },
-            # "period_status": {
-            #     "description": "accepts 3/6/9/12",
-            #     "type": "integer",
-            #     "required": False,
-            #     "in": "query",
-            # },
+            "period_type": {
+                "description": "Filter by period_type",
+                "type": "integer",
+                "enum": [3, 6, 9, 12],
+                "required": False,
+                "in": "query",
+            },
+            "consolidated": {
+                "description": "Filter by consolidated statements (true/false)",
+                "type": "boolean",
+                "required": False,
+                "in": "query",
+            },
+            "audited": {
+                "description": "Filter by audited statements (true/false)",
+                "type": "boolean",
+                "required": False,
+                "in": "query",
+            },
         },
     )
     @marshal_with(FinancialStatementSchema(many=True))
     def get(self, original_id):
+        # Get query parameters
         time_series = request.args.get("time_series", type=int)
-
-        # Query financial statements for the company
-        query = FinancialStatement.query.filter_by(company_id=original_id).order_by(
-            FinancialStatement.period_end.desc()
+        period_type = request.args.get("period_type", type=int)
+        consolidated = request.args.get(
+            "consolidated", type=lambda v: v.lower() == "true", default=None
+        )
+        audited = request.args.get(
+            "audited", type=lambda v: v.lower() == "true", default=None
         )
 
+        # Query financial statements for the company
+        query = (
+            FinancialStatement.query.filter_by(company_id=original_id)
+            .order_by(FinancialStatement.period_end.desc())
+            .filter_by(company_id=original_id)
+        )
+
+        # Apply query parameters
         if time_series:
             query = query.limit(time_series)
+
+        if period_type:
+            if period_type not in [3, 6, 9, 12]:
+                return {"error": "period_type must be 3, 6, 9, or 12"}, 400
+            query = query.filter(FinancialStatement.period_type == period_type)
+
+        if consolidated is not None:
+            query = query.filter(FinancialStatement.consolidated == consolidated)
+
+        if audited is not None:
+            query = query.filter(FinancialStatement.audited == audited)
+
+        query = query.order_by(FinancialStatement.period_end.desc())
 
         statements = query.all()
         return statements
