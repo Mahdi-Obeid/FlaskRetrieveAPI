@@ -19,6 +19,8 @@ from schemas import (
 )
 from flask.views import MethodView
 from swaggerConfig import docs
+from datetime import datetime
+from dateConverter import jalali_to_gregorian_year, is_valid_jalali_year
 
 
 class CompanyResource(MethodResource, MethodView):
@@ -77,6 +79,12 @@ class FinancialStatementResource(MethodResource, MethodView):
                 "required": False,
                 "in": "query",
             },
+            "year_filter": {
+                "description": "Filter By Jalali Year",
+                "type": "integer",
+                "required": False,
+                "in": "query",
+            },
         },
     )
     @marshal_with(FinancialStatementSchema(many=True))
@@ -89,6 +97,7 @@ class FinancialStatementResource(MethodResource, MethodView):
         audited = request.args.get(
             "audited", type=lambda v: v.lower() == "true", default=None
         )
+        year_filter = request.args.get("year_filter", type=int)
 
         # Query financial statements for the company
         query = (
@@ -97,15 +106,21 @@ class FinancialStatementResource(MethodResource, MethodView):
             .filter_by(company_id=original_id)
         )
 
-        # Apply query parameters
+        # Apply Filters
+        if year_filter:
+            if not is_valid_jalali_year(year_filter):
+                return {"error": "This year is not supported"}, 400
+
+            gregorian_year = jalali_to_gregorian_year(year_filter)
+            start_date = datetime(gregorian_year, 1, 1)
+
+            query = query.filter(FinancialStatement.fiscal_year_end >= start_date)
 
         if consolidated is not None:
             query = query.filter(FinancialStatement.consolidated == consolidated)
 
         if audited is not None:
             query = query.filter(FinancialStatement.audited == audited)
-
-        query = query.order_by(FinancialStatement.period_end.desc())
 
         if time_series:
             query = query.limit(time_series)
