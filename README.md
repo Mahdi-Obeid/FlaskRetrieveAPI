@@ -6,4 +6,12 @@
 
 3. .env file with DATABASE & URL & FLASK_APP=main.py
 
-4. flask run | python main.py
+4. database:
+    a. flask db init
+    b. flask db migrate
+    c. flask db upgrade
+    d. if error:
+        i. SELECT * FROM alembic_version;
+        ii. DELETE FROM alembic_version;
+
+5. python main.py | flask run
