@@ -20,7 +20,7 @@ from schemas import (
 from flask.views import MethodView
 from swaggerConfig import docs
 from datetime import datetime
-from dateConverter import jalali_to_gregorian_year, is_valid_jalali_year
+from dateConverter import jalali_to_gregorian_year
 
 
 class CompanyResource(MethodResource, MethodView):
@@ -62,19 +62,19 @@ class FinancialStatementResource(MethodResource, MethodView):
                 "in": "path",
             },
             "time_series": {
-                "description": "Number of Years 😎",
+                "description": "Filter By Number of Years",
                 "type": "integer",
                 "required": False,
                 "in": "query",
             },
             "consolidated": {
-                "description": "Filter by consolidated statements (true/false)",
+                "description": "Filter by Consolidated Statement",
                 "type": "boolean",
                 "required": False,
                 "in": "query",
             },
             "audited": {
-                "description": "Filter by audited statements (true/false)",
+                "description": "Filter by Audited Statement",
                 "type": "boolean",
                 "required": False,
                 "in": "query",
@@ -108,9 +108,6 @@ class FinancialStatementResource(MethodResource, MethodView):
 
         # Apply Filters
         if year_filter:
-            if not is_valid_jalali_year(year_filter):
-                return {"error": "This year is not supported"}, 400
-
             gregorian_year = jalali_to_gregorian_year(year_filter)
             start_date = datetime(gregorian_year, 1, 1)
 
