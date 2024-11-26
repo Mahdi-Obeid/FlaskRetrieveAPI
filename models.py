@@ -27,22 +27,16 @@ class Company(db.Model):
 
 class Status(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    company_original_id = db.Column(
-        db.Integer,
-        db.ForeignKey("company.original_id"),
-        unique=True,
-        nullable=False,
-    )
     count = db.Column(db.Integer())
     number = db.Column(db.Integer())
-
-
-class FinancialStatement(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
     company_id = db.Column(
         db.Integer,
         db.ForeignKey("company.original_id"),
     )
+
+
+class FinancialStatement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     period_end = db.Column(db.Date)
     fiscal_year_end = db.Column(db.Date)
     period_type = db.Column(
@@ -52,6 +46,10 @@ class FinancialStatement(db.Model):
     audited = db.Column(db.Boolean, default=False)
     consolidated = db.Column(db.Boolean, default=False)
     represented = db.Column(db.Boolean, default=False)
+    company_id = db.Column(
+        db.Integer,
+        db.ForeignKey("company.original_id"),
+    )
     items = db.relationship(
         "FinancialStatementItem",
         backref="financial_statement",
@@ -75,4 +73,43 @@ class FinancialStatementItem(db.Model):
     financial_statement_id = db.Column(
         db.Integer,
         db.ForeignKey("financial_statement.id"),
+    )
+
+
+class CurrentRatio(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    current_ratio = db.Column(db.Float)
+    financial_statement_id = db.Column(
+        db.Integer,
+        db.ForeignKey("financial_statement.id"),
+    )
+    company_id = db.Column(
+        db.Integer,
+        db.ForeignKey("company.original_id"),
+    )
+
+
+class QuickRatio(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    quick_ratio = db.Column(db.Float)
+    financial_statement_id = db.Column(
+        db.Integer,
+        db.ForeignKey("financial_statement.id"),
+    )
+    company_id = db.Column(
+        db.Integer,
+        db.ForeignKey("company.original_id"),
+    )
+
+
+class CashRatio(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cash_ratio = db.Column(db.Float)
+    financial_statement_id = db.Column(
+        db.Integer,
+        db.ForeignKey("financial_statement.id"),
+    )
+    company_id = db.Column(
+        db.Integer,
+        db.ForeignKey("company.original_id"),
     )

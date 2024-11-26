@@ -15,7 +15,7 @@ class CompanySchema(Schema):
 
 class StatusSchema(Schema):
     id = fields.Int(dump_only=True)
-    company_original_id = fields.Int(required=True)
+    company_id = fields.Int(required=True)
     count = fields.Int(allow_none=True)
     number = fields.Int(allow_none=True)
 
@@ -41,3 +41,24 @@ class FinancialStatementSchema(Schema):
     consolidated = fields.Bool(required=True)
     represented = fields.Bool(required=True)
     items = fields.Nested(FinancialStatementItemSchema, many=True)
+
+
+class CurrentRatioSchema(Schema):
+    id = fields.Int(dump_only=True)
+    company_id = fields.Int(required=True)
+    financial_statement_id = fields.Str()
+    current_ratio = fields.Float()
+
+
+class QuickRatioSchema(Schema):
+    id = fields.Int(dump_only=True)
+    company_id = fields.Int(required=True)
+    financial_statement_id = fields.Str()
+    quick_ratio = fields.Float()
+
+
+class CashRatioSchema(Schema):
+    id = fields.Int(dump_only=True)
+    company_id = fields.Int(required=True)
+    financial_statement_id = fields.Str()
+    cash_ratio = fields.Float()
