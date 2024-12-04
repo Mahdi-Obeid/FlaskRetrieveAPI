@@ -76,40 +76,37 @@ class FinancialStatementItem(db.Model):
     )
 
 
-class CurrentRatio(db.Model):
+class RatioList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    current_ratio = db.Column(db.Float)
+    ratioNameEng = db.Column(db.String(100))
+    ratioNamePer = db.Column(db.String(100))
+    ratioSymbol = db.Column(db.String(50))
+
+    ratios = db.relationship(
+        "RatioCalculation",
+        backref="ratio_list",
+        lazy="dynamic",
+    )
+
+
+class RatioCalculation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    calculated_ratio = db.Column(db.Float)
+    fiscal_year_end = db.Column(db.Date)
+    ratioNameEng = db.Column(db.String(100))
+    ratioNamePer = db.Column(db.String(100))
+
+    ratio_list_id = db.Column(
+        db.Integer,
+        db.ForeignKey("ratio_list.id"),
+    )
+
     financial_statement_id = db.Column(
         db.Integer,
         db.ForeignKey("financial_statement.id"),
     )
-    company_id = db.Column(
-        db.Integer,
-        db.ForeignKey("company.original_id"),
-    )
 
-
-class QuickRatio(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    quick_ratio = db.Column(db.Float)
-    financial_statement_id = db.Column(
-        db.Integer,
-        db.ForeignKey("financial_statement.id"),
-    )
-    company_id = db.Column(
-        db.Integer,
-        db.ForeignKey("company.original_id"),
-    )
-
-
-class CashRatio(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    cash_ratio = db.Column(db.Float)
-    financial_statement_id = db.Column(
-        db.Integer,
-        db.ForeignKey("financial_statement.id"),
-    )
-    company_id = db.Column(
+    company_original_id = db.Column(
         db.Integer,
         db.ForeignKey("company.original_id"),
     )

@@ -43,22 +43,19 @@ class FinancialStatementSchema(Schema):
     items = fields.Nested(FinancialStatementItemSchema, many=True)
 
 
-class CurrentRatioSchema(Schema):
+class RatioCalculationSchema(Schema):
     id = fields.Int(dump_only=True)
-    company_id = fields.Int(required=True)
-    financial_statement_id = fields.Str()
-    current_ratio = fields.Float()
+    calculated_ratio = fields.Float(required=True)
+    ratio_list_id = fields.Int(required=True)
+    financial_statement_id = fields.Int(required=True)
+    company_original_id = fields.Int(required=True)
+    fiscal_year_end = fields.Date(required=True)
+    ratioNameEng = fields.Str(required=True)
+    ratioNamePer = fields.Str(required=True)
 
 
-class QuickRatioSchema(Schema):
+class RatioListSchema(Schema):
     id = fields.Int(dump_only=True)
-    company_id = fields.Int(required=True)
-    financial_statement_id = fields.Str()
-    quick_ratio = fields.Float()
-
-
-class CashRatioSchema(Schema):
-    id = fields.Int(dump_only=True)
-    company_id = fields.Int(required=True)
-    financial_statement_id = fields.Str()
-    cash_ratio = fields.Float()
+    ratioNameEng = fields.Str(required=True)
+    ratioNamePer = fields.Str(required=True)
+    ratioSymbol = fields.Str(required=True)
