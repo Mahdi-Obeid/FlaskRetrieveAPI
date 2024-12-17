@@ -1,15 +1,44 @@
 # FlaskRetrieveAPI
 
-1. install virtual environment : py -m venv .venv
+### 1. Install virtual environment :
 
-2. .env file with DATABASE & URL & FLASK_APP=main.py
+```bash
+py -m venv .venv
+```
 
-3. database:
-    a. flask db init
-    b. flask db migrate
-    c. flask db upgrade
-    d. if error:
-        i. SELECT * FROM alembic_version;
-        ii. DELETE FROM alembic_version;
+### 2. Create .env file with :
 
-4. python main.py | flask run
+```bash
+DATABASE = "yourDataBaseName"
+FLASK_APP=main.py
+URL = "provided url"
+```
+
+### 3. Migrate to database:
+
+```bash
+a. flask db init
+b. flask db migrate
+c. flask db upgrade
+d. if error:
+    i. SELECT * FROM alembic_version;
+    ii. DELETE FROM alembic_version;
+```
+
+### 4. Import data before running the code:
+
+```bash
+python import_data.py
+```
+
+### 5. Fetch the project's data:
+
+```bash
+python main.py
+```
+
+### 6. Run project:
+
+```bash
+flask run
+```
