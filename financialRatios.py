@@ -15,7 +15,7 @@ def calculate_cash_ratio():
                 FinancialStatementItem.financial_statement_id,
                 FinancialStatementItem.amount,
             )
-            .filter(FinancialStatementItem.title == "موجودی نقد")
+            .filter(FinancialStatementItem.fetched_id == "bs_1")  # موجودی نقد
             .all()
         )
 
@@ -24,7 +24,7 @@ def calculate_cash_ratio():
                 FinancialStatementItem.financial_statement_id,
                 FinancialStatementItem.amount,
             )
-            .filter(FinancialStatementItem.title == "جمع بدهی‌های جاری")
+            .filter(FinancialStatementItem.fetched_id == "bs_139")  # جمع بدهی‌های جاری
             .all()
         )
 
@@ -40,11 +40,19 @@ def calculate_cash_ratio():
                     cash_ratio = total_cash / liabilities
                     ratio = RatioCalculation(
                         ratio_list_id=1,
-                        ratioNameEng= "cash ratio",
-                        ratioNamePer= "نقد به بدهی‌های جاری",
+                        ratioNameEng="cash ratio",
+                        ratioNamePer="نقد به بدهی‌های جاری",
                         financial_statement_id=fs_id,
-                        company_original_id=db.session.query(FinancialStatement.company_id).filter(FinancialStatement.id == fs_id).scalar(),
-                        fiscal_year_end=db.session.query(FinancialStatement.fiscal_year_end).filter(FinancialStatement.id == fs_id).scalar(),
+                        company_original_id=db.session.query(
+                            FinancialStatement.company_id
+                        )
+                        .filter(FinancialStatement.id == fs_id)
+                        .scalar(),
+                        fiscal_year_end=db.session.query(
+                            FinancialStatement.fiscal_year_end
+                        )
+                        .filter(FinancialStatement.id == fs_id)
+                        .scalar(),
                         calculated_ratio=cash_ratio,
                     )
                     db.session.add(ratio)
@@ -64,7 +72,7 @@ def calculate_current_ratio():
                 FinancialStatementItem.financial_statement_id,
                 FinancialStatementItem.amount,
             )
-            .filter(FinancialStatementItem.title == "جمع دارایی‌های جاری")
+            .filter(FinancialStatementItem.fetched_id == "bs_135")  # جمع دارایی‌های جاری
             .all()
         )
 
@@ -73,7 +81,7 @@ def calculate_current_ratio():
                 FinancialStatementItem.financial_statement_id,
                 FinancialStatementItem.amount,
             )
-            .filter(FinancialStatementItem.title == "جمع بدهی‌های جاری")
+            .filter(FinancialStatementItem.fetched_id == "bs_139")  # جمع بدهی‌های جاری
             .all()
         )
 
@@ -89,11 +97,19 @@ def calculate_current_ratio():
                     current_ratio = assets / liabilities
                     ratio = RatioCalculation(
                         ratio_list_id=2,
-                        ratioNameEng= "current ratio",
-                        ratioNamePer= "نسبت جاری",
+                        ratioNameEng="current ratio",
+                        ratioNamePer="نسبت جاری",
                         financial_statement_id=fs_id,
-                        company_original_id=db.session.query(FinancialStatement.company_id).filter(FinancialStatement.id == fs_id).scalar(),
-                        fiscal_year_end=db.session.query(FinancialStatement.fiscal_year_end).filter(FinancialStatement.id == fs_id).scalar(),
+                        company_original_id=db.session.query(
+                            FinancialStatement.company_id
+                        )
+                        .filter(FinancialStatement.id == fs_id)
+                        .scalar(),
+                        fiscal_year_end=db.session.query(
+                            FinancialStatement.fiscal_year_end
+                        )
+                        .filter(FinancialStatement.id == fs_id)
+                        .scalar(),
                         calculated_ratio=current_ratio,
                     )
                     db.session.add(ratio)
@@ -113,7 +129,7 @@ def calculate_quick_ratio():
                 FinancialStatementItem.financial_statement_id,
                 FinancialStatementItem.amount,
             )
-            .filter(FinancialStatementItem.title == "جمع دارایی‌های سریع ")
+            .filter(FinancialStatementItem.fetched_id == "bs_136")  # جمع دارایی‌های سریع
             .all()
         )
 
@@ -122,7 +138,7 @@ def calculate_quick_ratio():
                 FinancialStatementItem.financial_statement_id,
                 FinancialStatementItem.amount,
             )
-            .filter(FinancialStatementItem.title == "جمع بدهی‌های جاری")
+            .filter(FinancialStatementItem.fetched_id == "bs_139")  # جمع بدهی‌های جاری
             .all()
         )
 
@@ -138,11 +154,19 @@ def calculate_quick_ratio():
                     quick_ratio = assets / liabilities
                     ratio = RatioCalculation(
                         ratio_list_id=3,
-                        ratioNameEng= "quick ratio",
-                        ratioNamePer= "نسبت سریع",
+                        ratioNameEng="quick ratio",
+                        ratioNamePer="نسبت سریع",
                         financial_statement_id=fs_id,
-                        company_original_id=db.session.query(FinancialStatement.company_id).filter(FinancialStatement.id == fs_id).scalar(),
-                        fiscal_year_end=db.session.query(FinancialStatement.fiscal_year_end).filter(FinancialStatement.id == fs_id).scalar(),
+                        company_original_id=db.session.query(
+                            FinancialStatement.company_id
+                        )
+                        .filter(FinancialStatement.id == fs_id)
+                        .scalar(),
+                        fiscal_year_end=db.session.query(
+                            FinancialStatement.fiscal_year_end
+                        )
+                        .filter(FinancialStatement.id == fs_id)
+                        .scalar(),
                         calculated_ratio=quick_ratio,
                     )
                     db.session.add(ratio)
