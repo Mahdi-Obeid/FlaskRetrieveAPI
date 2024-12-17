@@ -1,12 +1,12 @@
 # FlaskRetrieveAPI
 
-### 1. Install virtual environment :
+### 1. Install virtual environment:
 
 ```bash
 py -m venv .venv
 ```
 
-### 2. Create .env file with :
+### 2. Create .env file with:
 
 ```bash
 DATABASE = "yourDataBaseName"
