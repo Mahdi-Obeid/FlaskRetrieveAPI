@@ -34,8 +34,8 @@ def fetch_and_store_data_companies():
         print("Companies data committed to the database.")
 
 
-def fetch_and_store_data_status():
-    companies = Company.query.all()
+def fetch_and_store_data_status(limit=5):
+    companies = Company.query.order_by(Company.original_id).limit(limit).all()
     print(f"Processing status for {len(companies)} companies")
 
     for company in companies:
@@ -50,9 +50,9 @@ def fetch_and_store_data_status():
             number = status_data.get("number")
 
             if count is not None and number is not None:
-                status = Status.query.filter_by(company_original_id=company_id).first()
+                status = Status.query.filter_by(company_id=company_id).first()
                 if not status:
-                    status = Status(company_original_id=company_id)
+                    status = Status(company_id=company_id)
 
                 status.count = count
                 status.number = number
